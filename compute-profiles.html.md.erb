@@ -13,54 +13,106 @@ using the PKS API.
 
 ## <a id='overview'></a> Overview
 
-When you deploy a cluster using <%= vars.product_short %>, you specify a plan
-to allocate resources to the cluster workload. You define plans in the
+When you deploy a cluster using <%= vars.product_short %>, you allocate
+resources to the cluster workload by specifying a plan. You define plans in the
 <%= vars.product_tile %> tile. For more information, see the [Plans](./installing-nsx-t.html#plans)
 section of _Installing <%= vars.product_short %> on vSphere with NSX-T_.
 
-In addition to plans, you can use compute profiles to allocate resources to
+In addition to plans, you can also use compute profiles to allocate resources to
 cluster workloads. Unlike plans, you can customize any number of compute profiles.
 
 You can define, configure, and use compute profiles using the PKS API.
 
 ## <a id='prerequisites'></a> Prerequisites
 
-Use one of the formats described below for the Prerequisites section.
+Before you define a compute profile, you must do the following:
 
-### Format for Two or More Prerequisites
+* Install <%= vars.product_short %>. See [Installing <%= vars.product_short %> on vSphere with NSX-T](installing-nsx-t.html).
 
-If there are two or more prerequisites, use the following format. Include links for more information, if necessary.
+## <a id='create'></a>Create a Compute Profile
 
-Before you [task], you must have/do the following:
+Define a compute profile in a JSON file, and then make a request to the PKS API
+using the JSON file. Any parameters you do not configure in the compute profile are
+set by the plan you use to create the cluster.
 
-* Prerequisite. See [Link]().
-* Prerequisite. See [Link]().
+To create a compute profile, do the following:
 
-For example:
+1. Locate the credentials used to import the PCF .ova or .ovf file into your virtualization system. You set these credentials when you installed Ops Manager.
+    <p class="note"><strong>Note</strong>: If you lose your credentials, you must shut down the Ops Manager VM in the vSphere UI and reset the password. See <a href="https://docs.vmware.com/en/VMware-vSphere/6.5/com.vmware.vsphere.security.doc/GUID-4BDBF79A-6C16-43B0-B0B1-637BF5516112.html">vCenter Password Requirements and Lockout Behavior</a> in the vSphere documentation for more information.</p>
 
-Before you install the plugin, you must have the following:
+1. From a command line, run the following command to SSH into the Ops Manager VM:
 
-* PAS 2.2 or later. See [Link to Instructions]().
-* The App Automator plugin. See [Link to Instructions to Download]().
+    ```
+    ssh ubuntu@OPS-MANAGER-FQDN
+    ```
+    Where `OPS-MANAGER-FQDN` is the fully qualified domain name (FQDN) of Ops Manager.
 
-### Format for One Prerequisite
+1. When prompted, enter the password that you set during the .ova deployment
+into vCenter. For example:
+  <pre class="terminal">
+  $ ssh ubuntu&#64;my-opsmanager-fqdn.example.com
+  Password: ***********
+  </pre>
 
-If there is one prerequisite, use the following format. Include a link for more information, if necessary.
+1. Run `bosh cpi-config` to locate the Cloud Provider Interface (CPI) name for your deployment. For example:
 
-Before you [task], you must have/do [prerequisite]. See [Link]().
+    ```
+    USERNAME@OPS-MANAGER-VM:~$ bosh cpi-config
+    Using environment 'BOSH-DIRECTOR-IP' as client 'ops_manager'
 
-For example:
+    cpis:
+    - migrated_from:
+      - name: ""
+      name: YOUR-CPI-NAME
+    ```
 
-Before you install the plugin, you must have PAS 2.2 or later. See [Link to Instructions]().
+1. In a new text file, enter the parameters for the compute profile in the following format:
 
-## <a id='task-1'></a> Task 1
+    ```txt
+    {
+        "name" : "PROFILE-NAME",
+        "description" : "PROFILE-DESCRIPTION",
+        "parameters" : {
+            "azs": [{
+                "cpi": "CPI-ID",
+                "name": "YOUR-AZ",
+                "cloud_properties": {
+                    availability_zone: "YOUR-AZ-ZONE"
+                }
+            }],
+            "worker_azs": ["YOUR-AZ"],
+            "master_azs": ["YOUR-AZ"],
+        },
+    }
+    ```
 
-Write a few sentences to describe the task and provide additional context on the task.
+    Where:
+    - `PROFILE-NAME` is the name of the compute profile you want to define.
+    - `PROFILE-DESCRIPTION` describes the compute profile.
+    - `CPI-ID` is the CPI ID number you located in a previous step.
+    - `YOUR-AZ` is the availability zone (AZ) name.
+    - `YOUR-AZ-ZONE` is the AZ name in your cloud provider console.
+    For example:
+    <pre class="terminal">
+    {
+        "name" : "prod",
+        "description" : "For production clusters",
+        "parameters" : {
+            "azs": [{
+                "cpi": "cpi-id",
+                "name": "z1",
+                "cloud_properties": {
+                    availability_zone: "us-east-1a"
+                }
+            }],
+            "worker_azs": ["z1"],
+            "master_azs": ["z1"],
+        },
+    }
+    </pre>
 
-To [task], do the following:
 
-1. Step 1
-1. Step 2
+1. Save the file with a JSON extension. For example, `prod-clusters.json`.
 
 ## <a id='task-2'></a> (Optional) Task 2
 
