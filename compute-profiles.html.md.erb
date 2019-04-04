@@ -65,6 +65,7 @@ into vCenter. For example:
       - name: ""
       name: YOUR-CPI-NAME
     ```
+    For more information about running BOSH commands in your PKS deployment, see [Managing <%= vars.product_short %> Deployments with BOSH](manage-deployments-bosh.html).
 
 1. In a new text file, enter the parameters for the compute profile in the following format:
 
@@ -74,45 +75,46 @@ into vCenter. For example:
         "description" : "PROFILE-DESCRIPTION",
         "parameters" : {
             "azs": [{
-                "cpi": "CPI-ID",
-                "name": "YOUR-AZ",
+                "cpi": "CPI-NAME",
+                "name": "AZ-NAME",
                 "cloud_properties": {
-                    availability_zone: "YOUR-AZ-ZONE"
+                    availability_zone: "CLUSTER-AZ"
                 }
             }],
-            "worker_azs": ["YOUR-AZ"],
-            "master_azs": ["YOUR-AZ"],
+            "worker_azs": ["AZ-NAME"],
+            "master_azs": ["AZ-NAME"],
         },
     }
     ```
 
     Where:
-    - `PROFILE-NAME` is the name of the compute profile you want to define.
+    - `PROFILE-NAME` is the name of the compute profile you want to define. For example, `dev`.
     - `PROFILE-DESCRIPTION` describes the compute profile.
-    - `CPI-ID` is the CPI ID number you located in a previous step.
-    - `YOUR-AZ` is the availability zone (AZ) name.
-    - `YOUR-AZ-ZONE` is the AZ name in your cloud provider console.
-    For example:
+    - `CPI-NAME` is the CPI name you located in the previous step. For example, `abc012abc345abc567de`.
+    - `AZ-NAME` is a name you can set for the availability zone (AZ) where you deploy cluster VMs. For example, `z1`.
+    - `CLUSTER-AZ` is the name of an AZ in Ops Manager and your cloud provider console. For example, `us-east-1a`.
+<br><br>
+  For example:
     <pre class="terminal">
     {
-        "name" : "prod",
-        "description" : "For production clusters",
-        "parameters" : {
-            "azs": [{
-                "cpi": "cpi-id",
-                "name": "z1",
-                "cloud_properties": {
-                    availability_zone: "us-east-1a"
-                }
-            }],
-            "worker_azs": ["z1"],
-            "master_azs": ["z1"],
-        },
+          "name" : "dev",
+          "description" : "For development clusters",
+          "parameters" : {
+              "azs": [{
+                  "cpi": "abc012abc345abc567des",
+                  "name": "z1",
+                  "cloud_properties": {
+                      availability_zone: "us-east-1a"
+                  }
+              }],
+              "worker_azs": ["z1"],
+              "master_azs": ["z1"],
+          },
     }
     </pre>
 
 
-1. Save the file with a JSON extension. For example, `prod-clusters.json`.
+1. Save the file with a JSON extension. For example, `dev-clusters.json`.
 
 ## <a id='task-2'></a> (Optional) Task 2
 
