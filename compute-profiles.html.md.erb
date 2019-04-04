@@ -29,7 +29,7 @@ Before you define a compute profile, you must do the following:
 
 * Install <%= vars.product_short %>. See [Installing <%= vars.product_short %> on vSphere with NSX-T](installing-nsx-t.html).
 
-## <a id='create'></a>Create a Compute Profile
+## <a id='create'></a> Create a Compute Profile
 
 Define a compute profile in a JSON file, and then make a request to the PKS API
 using the JSON file. Any parameters you do not configure in the compute profile are
@@ -88,31 +88,31 @@ into vCenter. For example:
     ```
 
     Where:
-    - `PROFILE-NAME` is the name of the compute profile you want to define. For example, `dev`.
-    - `PROFILE-DESCRIPTION` describes the compute profile.
+    - `PROFILE-NAME` is the name of the compute profile you want to define. Enter a string value up to 26 characters long. For example, `dev`.
+    - (Optional) `PROFILE-DESCRIPTION` describes the compute profile.
     - `CPI-NAME` is the CPI name you located in the previous step. For example, `abc012abc345abc567de`.
-    - `AZ-NAME` is a name you can set for the availability zone (AZ) where you deploy cluster VMs. For example, `z1`.
-    - `CLUSTER-AZ` is the name of an AZ in Ops Manager and your cloud provider console. For example, `us-east-1a`.
-<br><br>
-  For example:
+    - (Optional) `AZ-NAME` is a name you define for the availability zone (AZ) or zones where you deploy cluster VMs. For example, `z1`. You can define multiple AZ names in this array.
+    - (Optional) `CLUSTER-AZ` is the name of an AZ in Ops Manager and your cloud provider console. For example, `us-east-1a`.
+
+    For example:
     <pre class="terminal">
     {
-          "name" : "dev",
-          "description" : "For development clusters",
-          "parameters" : {
-              "azs": [{
-                  "cpi": "abc012abc345abc567des",
-                  "name": "z1",
-                  "cloud_properties": {
-                      availability_zone: "us-east-1a"
-                  }
-              }],
-              "worker_azs": ["z1"],
-              "master_azs": ["z1"],
-          },
+        "name" : "dev",
+        "description" : "For development clusters",
+        "parameters" : {
+            "azs": [{
+                "cpi": "abc012abc345abc567des",
+                "name": "z1",
+                "cloud_properties": {
+                    availability_zone: "us-east-1a"
+                }
+            }],
+            "worker_azs": ["z1"],
+            "master_azs": ["z1"],
+        },
     }
     </pre>
-
+    <p class="note"><strong>Note</strong>: If you define multiple AZs in the <code>azs</code> array, you can specify different AZs for worker node VMs and master node VMs.</p>
 
 1. Save the file with a JSON extension. For example, `dev-clusters.json`.
 
